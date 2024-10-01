@@ -1,9 +1,16 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
+import HomeNavbar from '../navbar/HomeNavbar'
 
 const Home = () => {
+  const navigate = useNavigate()
+
+  const handleClickLogin = () => {
+    navigate('/login')
+  }
   return (
     <div>
-        <h1>Welcome to my React App</h1>
+      <HomeNavbar></HomeNavbar>
     </div>
   )
 }
