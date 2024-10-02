@@ -27,9 +27,9 @@ const Login = () => {
     console.log(formData);
 
     try {
-      const res = await axiosInstance.post("/users", formData);
-      console.log("Login Successful", res.data);
-      console.log("Login message message", res.data.message);
+      const res = await axiosInstance.post("/login", formData);
+      console.log(res.data);
+      console.log(res.data.message);
       setSuccess(true);
       setSuccessMessage(res.data.message);
       setFormData({email: "", password: ""});
