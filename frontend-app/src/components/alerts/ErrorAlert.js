@@ -5,7 +5,6 @@ const ErrorAlert = ({errorMessage, sx={}}) => {
   return (
     <div>
         <Alert 
-        variant="filled" 
         severity="error" 
         sx={{ 
             height:'20px', 

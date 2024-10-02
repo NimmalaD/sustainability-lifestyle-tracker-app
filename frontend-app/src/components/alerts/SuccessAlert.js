@@ -5,7 +5,7 @@ const SuccessAlert = ({successMessage, sx = {}}) => {
   return (
     <div>
         <Alert 
-        variant="filled" 
+        
         severity="success" 
         sx={{height:'20px', 
             display:'flex', 

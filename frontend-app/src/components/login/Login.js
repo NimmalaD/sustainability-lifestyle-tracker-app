@@ -35,13 +35,15 @@ const Login = () => {
       setFormData({email: "", password: ""});
       setError(null);
     } catch (error) {
-      console.error(
-        "Error during logging in:",
-        error.response?.data || error.message
-      );
-      if (error.response && error.response.data && error.response.data.error) {
-        // alert(error.response.data.error);
-        setError(error.response.data.error);
+      console.error("Error during logging in:", error.response?.data || error.message);
+      setSuccess(false)
+      
+      // Extract the message from the error response and set it
+      if (error.response && error.response.data && error.response.data.message) {
+        console.log(error.response)
+        console.log(error.response.data)
+        console.log(error.response.data.message);
+        setError(error.response.data.message); // Set the error message from the backend
       } else {
         setError("An error occurred. Please try again.");
       }
