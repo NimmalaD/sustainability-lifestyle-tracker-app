@@ -3,9 +3,10 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import axiosInstance from "../../axiosInstance";
-import Alert from '@mui/material/Alert';
+import Alert from "@mui/material/Alert";
 import ErrorAlert from "../alerts/ErrorAlert";
 import SuccessAlert from "../alerts/SuccessAlert";
+import { Link } from "@mui/material";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -15,9 +16,9 @@ const Signup = () => {
     age: "",
   });
 
-  const [error, setError] = useState(null)
-  const [success, setSuccess] = useState(false)
-  const [successMessage, setSuccessMessage] = useState(null)
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -29,16 +30,19 @@ const Signup = () => {
     try {
       const res = await axiosInstance.post("/users", formData);
       console.log("User Registered", res.data);
-      console.log('Registration message', res.data.message)
-        setSuccess(true)
-        setSuccessMessage(res.data.message)
+      console.log("Registration message", res.data.message);
+      setSuccess(true);
+      setSuccessMessage(res.data.message);
       setFormData({ name: "", email: "", password: "", age: "" });
-      setError(null)
+      setError(null);
     } catch (error) {
-      console.error("Error during registration:", error.response?.data || error.message);
+      console.error(
+        "Error during registration:",
+        error.response?.data || error.message
+      );
       if (error.response && error.response.data && error.response.data.error) {
         // alert(error.response.data.error);
-        setError(error.response.data.error)
+        setError(error.response.data.error);
       } else {
         setError("An error occurred. Please try again.");
       }
@@ -65,7 +69,6 @@ const Signup = () => {
           marginLeft: "700px",
         }}
       >
-        
         <Box
           component="form"
           onSubmit={handleSubmit}
@@ -74,18 +77,34 @@ const Signup = () => {
             flexDirection: "column",
             gap: 2,
             width: "350px",
-            padding: "40px",
+            paddingTop: "20px",
+            paddingLeft:'40px',
+            paddingRight: '40px',
+            paddingBottom: '40px',
             border: "1px solid white",
             borderRadius: "10px",
-            height: "320px",
+            height: "400px",
             backgroundColor: "white",
           }}
         >
-            <div>
-        {error && <ErrorAlert errorMessage={error}></ErrorAlert>}
-        {success && <SuccessAlert successMessage={successMessage}></SuccessAlert>}
-
-        </div>
+            
+          <div>
+            {error && (
+              <ErrorAlert
+                errorMessage={error}
+                sx={{ position: "absolute", top: 163, left: 924, right: 10 }}
+              ></ErrorAlert>
+            )}
+            {success && (
+              <SuccessAlert
+                successMessage={successMessage}
+                sx={{ position: "absolute", top: 163, left: 924, right: 10 }}
+              ></SuccessAlert>
+            )}
+          </div>
+          <div>
+                <h3 sx={{margin: '0px'}}>New User? Register here!</h3>
+            </div>
           <TextField
             label="Name"
             type="text"
@@ -163,7 +182,11 @@ const Signup = () => {
             >
               Register
             </Button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', fontSize: '15px' }}> 
+            <p>Already Registered?</p><Link href="/login" underline="always">Login</Link>
           </div>
+          </div>
+          
         </Box>
       </div>
     </div>
