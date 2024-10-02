@@ -6,6 +6,8 @@ import axiosInstance from "../../axiosInstance";
 import ErrorAlert from "../alerts/ErrorAlert";
 import SuccessAlert from "../alerts/SuccessAlert";
 import { Link } from "@mui/material";
+import {Divider, Typography} from "@mui/material";
+import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -74,10 +76,10 @@ const Login = () => {
             flexDirection: "column",
             gap: 2,
             width: "350px",
-            paddingTop: "20px",
+            paddingTop: "50px",
             paddingLeft:'40px',
             paddingRight: '40px',
-            paddingBottom: '40px',
+            paddingBottom: '10px',
             border: "1px solid white",
             borderRadius: "10px",
             height: "300px",
@@ -99,8 +101,8 @@ const Login = () => {
             )}
           </div>
           <div>
-                <h3 sx={{margin: '0px'}}>Please Login!</h3>
-            </div>
+          <Divider><LockOpenOutlinedIcon></LockOpenOutlinedIcon><Typography level="h1" sx={{fontSize:'20px', fontWeight: 'bold'}}>Login</Typography></Divider>
+          </div>
           <TextField
             label="Email"
             type="email"

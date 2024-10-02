@@ -5,7 +5,9 @@ import Box from "@mui/material/Box";
 import axiosInstance from "../../axiosInstance";
 import ErrorAlert from "../alerts/ErrorAlert";
 import SuccessAlert from "../alerts/SuccessAlert";
-import { Link } from "@mui/material";
+import { Divider, Link } from "@mui/material";
+import {Typography} from "@mui/material";
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -76,13 +78,13 @@ const Signup = () => {
             flexDirection: "column",
             gap: 2,
             width: "350px",
-            paddingTop: "20px",
+            paddingTop: "50px",
             paddingLeft:'40px',
             paddingRight: '40px',
-            paddingBottom: '40px',
+            paddingBottom: '10px',
             border: "1px solid white",
             borderRadius: "10px",
-            height: "420px",
+            height: "430px",
             backgroundColor: "white",
           }}
         >
@@ -101,9 +103,9 @@ const Signup = () => {
             )}
           </div>
           <div>
-                <h3 sx={{margin: '0px'}}>New User? Register here!</h3>
-            </div>
-          <TextField
+          <Divider><LockOutlinedIcon></LockOutlinedIcon><Typography level="h1" sx={{fontSize:'20px', fontWeight: 'bold'}}>Sign Up</Typography></Divider>
+          </div>
+                    <TextField
             label="Name"
             type="text"
             variant="standard"
