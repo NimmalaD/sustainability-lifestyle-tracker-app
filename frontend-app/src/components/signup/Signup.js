@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import axiosInstance from "../../axiosInstance";
 import Alert from '@mui/material/Alert';
 import ErrorAlert from "../alerts/ErrorAlert";
+import SuccessAlert from "../alerts/SuccessAlert";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +16,8 @@ const Signup = () => {
   });
 
   const [error, setError] = useState(null)
+  const [success, setSuccess] = useState(false)
+  const [successMessage, setSuccessMessage] = useState(null)
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,8 +28,12 @@ const Signup = () => {
 
     try {
       const res = await axiosInstance.post("/users", formData);
-      console.log("User Registered", res);
+      console.log("User Registered", res.data);
+      console.log('Registration message', res.data.message)
+        setSuccess(true)
+        setSuccessMessage(res.data.message)
       setFormData({ name: "", email: "", password: "", age: "" });
+      setError(null)
     } catch (error) {
       console.error("Error during registration:", error.response?.data || error.message);
       if (error.response && error.response.data && error.response.data.error) {
@@ -76,6 +83,8 @@ const Signup = () => {
         >
             <div>
         {error && <ErrorAlert errorMessage={error}></ErrorAlert>}
+        {success && <SuccessAlert successMessage={successMessage}></SuccessAlert>}
+
         </div>
           <TextField
             label="Name"
