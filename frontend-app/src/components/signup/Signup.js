@@ -3,7 +3,6 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import axiosInstance from "../../axiosInstance";
-import Alert from "@mui/material/Alert";
 import ErrorAlert from "../alerts/ErrorAlert";
 import SuccessAlert from "../alerts/SuccessAlert";
 import { Link } from "@mui/material";
@@ -83,11 +82,10 @@ const Signup = () => {
             paddingBottom: '40px',
             border: "1px solid white",
             borderRadius: "10px",
-            height: "400px",
+            height: "420px",
             backgroundColor: "white",
           }}
         >
-            
           <div>
             {error && (
               <ErrorAlert
@@ -186,7 +184,6 @@ const Signup = () => {
             <p>Already Registered?</p><Link href="/login" underline="always">Login</Link>
           </div>
           </div>
-          
         </Box>
       </div>
     </div>
