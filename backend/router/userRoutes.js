@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { createUser, fetchUser, loginUser } = require('../controller/userController');
-const { createCarbonFootprint, fetchUserCarbonFootprint, checkUserHasCarbonFootprint, updateCarbonFootprint } = require('../controller/carbonFootprintController');
+const { createCarbonFootprint, fetchAllUserCarbonFootprints, checkUserHasCarbonFootprint, updateCarbonFootprint, fetchOneCarbonFootprint } = require('../controller/carbonFootprintController');
 const { addGoal, fetchUserGoals, deleteGoals } = require('../controller/goalController');
 const verifyToken = require('../middleware/verifyToken'); // Import JWT middleware
 
@@ -12,9 +12,10 @@ router.get('/users/:id', verifyToken, fetchUser); // Public: Fetch user data
 
 // Carbon Footprint Routes
 router.post('/users/:userId/carbon-footprint', verifyToken, createCarbonFootprint); // Protected: Create a carbon footprint
-router.get('/users/:userId/carbon-footprint', verifyToken, fetchUserCarbonFootprint); // Protected: Fetch carbon footprint for a specific user
+router.get('/users/:userId/carbon-footprint', verifyToken, fetchAllUserCarbonFootprints); // Protected: Fetch carbon footprint for a specific user
 router.put('/users/:userId/carbon-footprint', verifyToken, updateCarbonFootprint); // Protected: Update carbon footprint
 router.get('/check-carbon-footprint/:userId', verifyToken, checkUserHasCarbonFootprint); // Protected: Check if the user has a carbon footprint
+router.get('/users/:userId/carbon-footprints/:carbonFootprintId', verifyToken, fetchOneCarbonFootprint);
 
 // Goals Routes
 router.post('/users/:userId/goals', verifyToken, addGoal); // Protected: Add a new goal for a user

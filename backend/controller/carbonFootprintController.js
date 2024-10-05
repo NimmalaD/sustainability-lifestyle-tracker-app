@@ -61,7 +61,7 @@ const createCarbonFootprint = async (req, res) => {
 };
 
 // Fetch carbon footprint data for a specific user
-const fetchUserCarbonFootprint = async (req, res) => {
+const fetchAllUserCarbonFootprints = async (req, res) => {
   try {
     const { userId } = req.params;
     const carbonFootprints = await CarbonFootprint.find({ userId });
@@ -74,6 +74,25 @@ const fetchUserCarbonFootprint = async (req, res) => {
 
     res.status(200).json({ data: carbonFootprints });
   } catch (error) {
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+const fetchOneCarbonFootprint = async (req, res) => {
+  try {
+    const carbonFootprintId = req.params.carbonFootprintId;
+    const carbonFootprint = await CarbonFootprint.findById(carbonFootprintId);
+    
+    // Check if the carbon footprint exists and belongs to the authenticated user
+    if (!carbonFootprint || carbonFootprint.userId.toString() !== req.user.userId) {
+      console.log("Unauthorized: User ID does not match the authenticated user");
+      return res.status(403).json({ message: "Unauthorized action" });
+    }
+
+    // Return the carbon footprint data
+    res.status(200).json({ data: carbonFootprint });
+  } catch (error) {
+    console.error("Error fetching carbon footprint:", error);
     res.status(500).json({ message: "Internal server error." });
   }
 };
@@ -149,7 +168,8 @@ const checkUserHasCarbonFootprint = async (req, res) => {
 
 module.exports = {
   createCarbonFootprint,
-  fetchUserCarbonFootprint,
+  fetchAllUserCarbonFootprints,
   checkUserHasCarbonFootprint,
   updateCarbonFootprint,
+  fetchOneCarbonFootprint
 };
