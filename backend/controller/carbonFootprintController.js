@@ -9,7 +9,7 @@ const createCarbonFootprint = async (req, res) => {
     console.log(`Creating carbon footprint for userId: ${userId}`); // Log userId
     console.log("Carbon Footprint Data:", carbonFootprintData); // Log incoming data
 
-    if (req.user._id.toString() !== userId) {
+    if (req.user._id === userId) {
       console.log("Unauthorized: User ID does not match the authenticated user");
       return res.status(403).json({ message: "Unauthorized action" });
     }
@@ -64,15 +64,15 @@ const createCarbonFootprint = async (req, res) => {
 const fetchUserCarbonFootprint = async (req, res) => {
   try {
     const { userId } = req.params;
-    const carbonFootprintData = await CarbonFootprint.findOne({ userId });
+    const carbonFootprints = await CarbonFootprint.find({ userId });
 
-    if (!carbonFootprintData) {
+    if (!carbonFootprints) {
       return res
         .status(404)
         .json({ message: "No carbon footprint data found for this user." });
     }
 
-    res.status(200).json({ data: carbonFootprintData });
+    res.status(200).json({ data: carbonFootprints });
   } catch (error) {
     res.status(500).json({ message: "Internal server error." });
   }

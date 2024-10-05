@@ -25,12 +25,19 @@ const carbonFootprintSchema = new mongoose.Schema({
     }, // in liters
   },
   transport: {
-    mode: {
-      type: String,
-      enum: ["car", "bike", "public_transport", "walk"],
-      required: true,
-    },
-    distance: { 
+    car: { 
+      type: Number, 
+      default: 0 
+    }, // in km
+    bike: { 
+      type: Number, 
+      default: 0 
+    }, // in km
+    publicTransport: { 
+      type: Number, 
+      default: 0 
+    }, // in km
+    walk: { 
       type: Number, 
       default: 0 
     }, // in km
@@ -57,16 +64,24 @@ const carbonFootprintSchema = new mongoose.Schema({
 
 // Method to calculate total carbon emission based on inputs
 carbonFootprintSchema.methods.calculateTotalEmission = function () {
-  let totalEmission = 0;
-
-  // Simple example calculations for illustration
-  totalEmission += this.homeEnergy.electricity * 0.5; // Each kWh contributes 0.5 kg CO2
-  totalEmission += this.homeEnergy.gas * 2.5; // Each cubic meter of gas contributes 2.5 kg CO2
-  totalEmission += this.transport.distance * 0.2; // Each km traveled by car contributes 0.2 kg CO2
-
-  // Waste management
-  totalEmission += this.waste.paper * 0.1; // Each kg of paper waste contributes 0.1 kg CO2
-  totalEmission += this.waste.plastic * 0.2; // Each kg of plastic waste contributes 0.2 kg CO2
+  const totalElectricity = this.homeEnergy.electricity * 0.5;
+  const totalGas = this.homeEnergy.gas * 2.5;
+  const totalWater = this.homeEnergy.water * 0.1; // Including water in the calculation
+  
+  const totalCar = this.transport.car * 0.2;
+  const totalBike = this.transport.bike * 0.2;
+  const totalPublicTransport = this.transport.publicTransport * 0.2;
+  const totalWalk = this.transport.walk * 0.2;
+  
+  const totalPaper = this.waste.paper * 0.1;
+  const totalPlastic = this.waste.plastic * 0.2;
+  const totalGlass = this.waste.glass; // Assuming this value already represents CO2 kg
+  
+  // Sum all components for total emission
+  const totalEmission = 
+    totalElectricity + totalGas + totalWater +
+    totalCar + totalBike + totalPublicTransport + totalWalk +
+    totalPaper + totalPlastic + totalGlass;
 
   this.totalCarbonEmission = totalEmission;
   return totalEmission;

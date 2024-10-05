@@ -22,7 +22,7 @@ const CarbonFootprintDashboard = ({home, transport, waste, totalEmission}) => {
            
           }}
         >
-          <IndividualCarbonSummary name={'Electricity'} units={home} icon={TungstenIcon} color={'#F2DF07'}></IndividualCarbonSummary>
+          <IndividualCarbonSummary name={'Home'} units={home} icon={TungstenIcon} color={'#F2DF07'}></IndividualCarbonSummary>
           <IndividualCarbonSummary name={'Transport'} units={transport} icon={GasMeterIcon} color={'#0BDA51'}></IndividualCarbonSummary>
           <IndividualCarbonSummary name={'Waste'} units={waste} icon={WaterDropIcon} color={'#00d0ff'}></IndividualCarbonSummary>
           <IndividualCarbonSummary name={'Total'} units={totalEmission} icon={WaterDropIcon} color={'#00d0ff'}></IndividualCarbonSummary>
