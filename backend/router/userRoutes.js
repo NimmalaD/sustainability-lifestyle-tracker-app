@@ -15,7 +15,7 @@ router.post('/users/:userId/carbon-footprint', verifyToken, createCarbonFootprin
 router.get('/users/:userId/carbon-footprint', verifyToken, fetchAllUserCarbonFootprints); // Protected: Fetch carbon footprint for a specific user
 router.put('/users/:userId/carbon-footprint', verifyToken, updateCarbonFootprint); // Protected: Update carbon footprint
 router.get('/check-carbon-footprint/:userId', verifyToken, checkUserHasCarbonFootprint); // Protected: Check if the user has a carbon footprint
-router.get('/users/:userId/carbon-footprints/:carbonFootprintId', verifyToken, fetchOneCarbonFootprint);
+router.get('/users/:userId/carbon-footprints/:carbonFootprintId', verifyToken, fetchOneCarbonFootprint); // Get Single Carbonfootprint
 
 // Goals Routes
 router.post('/users/:userId/goals', verifyToken, addGoal); // Protected: Add a new goal for a user
