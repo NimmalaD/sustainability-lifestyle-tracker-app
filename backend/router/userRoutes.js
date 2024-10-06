@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { createUser, fetchUser, loginUser } = require('../controller/userController');
 const { createCarbonFootprint, fetchAllUserCarbonFootprints, checkUserHasCarbonFootprint, updateCarbonFootprint, fetchOneCarbonFootprint } = require('../controller/carbonFootprintController');
-const { addGoal, fetchUserGoals, deleteGoals } = require('../controller/goalController');
+const { addGoal, fetchUserGoals, deleteGoals, fetchOneGoal } = require('../controller/goalController');
 const verifyToken = require('../middleware/verifyToken'); // Import JWT middleware
 
 // User Routes
@@ -21,5 +21,6 @@ router.get('/users/:userId/carbon-footprints/:carbonFootprintId', verifyToken, f
 router.post('/users/:userId/goals', verifyToken, addGoal); // Protected: Add a new goal for a user
 router.get('/users/:userId/goals', verifyToken, fetchUserGoals); // Protected: Fetch goals for a user
 router.delete('/users/:userId/goals/:goalId', verifyToken, deleteGoals); // Protected: Delete a goal for a user
+router.get('/users/:userId/goals/:goalId', verifyToken, fetchOneGoal); // Protected: Delete a goal for a user
 
 module.exports = router;

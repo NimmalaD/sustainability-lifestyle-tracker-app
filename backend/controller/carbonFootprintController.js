@@ -9,7 +9,7 @@ const createCarbonFootprint = async (req, res) => {
     console.log(`Creating carbon footprint for userId: ${userId}`); // Log userId
     console.log("Carbon Footprint Data:", carbonFootprintData); // Log incoming data
 
-    if (req.user._id === userId) {
+    if (req.user.userId !== userId) {
       console.log("Unauthorized: User ID does not match the authenticated user");
       return res.status(403).json({ message: "Unauthorized action" });
     }
@@ -64,12 +64,14 @@ const createCarbonFootprint = async (req, res) => {
 const fetchAllUserCarbonFootprints = async (req, res) => {
   try {
     const { userId } = req.params;
-    const carbonFootprints = await CarbonFootprint.find({ userId });
+    if (req.user.userId !== userId) {
+      console.log("Unauthorized: User ID does not match the authenticated user");
+      return res.status(403).json({ message: "Unauthorized action" });
+    }
 
+    const carbonFootprints = await CarbonFootprint.find({ userId });
     if (!carbonFootprints) {
-      return res
-        .status(404)
-        .json({ message: "No carbon footprint data found for this user." });
+      return res.status(404).json({ message: "No carbon footprint data found for this user." });
     }
 
     res.status(200).json({ data: carbonFootprints });
@@ -80,13 +82,23 @@ const fetchAllUserCarbonFootprints = async (req, res) => {
 
 const fetchOneCarbonFootprint = async (req, res) => {
   try {
-    const carbonFootprintId = req.params.carbonFootprintId;
+    const {userId, carbonFootprintId} = req.params
     const carbonFootprint = await CarbonFootprint.findById(carbonFootprintId);
-    
-    // Check if the carbon footprint exists and belongs to the authenticated user
-    if (!carbonFootprint || carbonFootprint.userId.toString() !== req.user.userId) {
+    console.log(req.user.userId)
+    console.log(req.user._id)
+    console.log(userId)
+    console.log(req.user)
+    console.log(req.params)
+    console.log(req.params.carbonFootprintId)
+
+    if (req.user.userId !== userId) {
       console.log("Unauthorized: User ID does not match the authenticated user");
       return res.status(403).json({ message: "Unauthorized action" });
+    }
+
+    if (!carbonFootprint) {
+      console.log("Carbonfootprint not found");
+      return res.status(404).json({ message: "Carbonfootprint not found" });
     }
 
     // Return the carbon footprint data
@@ -104,9 +116,9 @@ const updateCarbonFootprint = async (req, res) => {
     const { carbonFootprintData } = req.body;
 
     console.log(`Updating carbon footprint for userId: ${userId}`); // Log userId
-    console.log("New Carbon Footprint Data:", carbonFootprintData); // Log incoming data
 
-    if (req.user._id.toString() !== userId) {
+    // Ensure the logged-in user is the same as the userId in params
+    if (req.user.userId !== userId) {
       console.log("Unauthorized: User ID does not match the authenticated user");
       return res.status(403).json({ message: "Unauthorized action" });
     }
@@ -116,11 +128,10 @@ const updateCarbonFootprint = async (req, res) => {
       userId,
       date: carbonFootprintData.date,
     });
+
     if (!existingCarbonFootprint) {
       console.log("Carbon footprint data not found for the specified date");
-      return res
-        .status(404)
-        .json({ message: "Carbon footprint data not found for this date." });
+      return res.status(404).json({ message: "Carbon footprint data not found for this date." });
     }
 
     // Update the carbon footprint data
@@ -130,21 +141,15 @@ const updateCarbonFootprint = async (req, res) => {
 
     // Recalculate the total emission
     existingCarbonFootprint.calculateTotalEmission();
-
     const updatedCarbonFootprint = await existingCarbonFootprint.save();
 
-    console.log(
-      "Carbon footprint updated successfully:",
-      updatedCarbonFootprint
-    ); // Log the updated footprint
-    res
-      .status(200)
-      .json({
-        message: "Carbon footprint updated successfully",
-        data: updatedCarbonFootprint,
-      });
+    console.log("Carbon footprint updated successfully:", updatedCarbonFootprint);
+    res.status(200).json({
+      message: "Carbon footprint updated successfully",
+      data: updatedCarbonFootprint,
+    });
   } catch (error) {
-    console.error("Error updating carbon footprint:", error); // Log the error
+    console.error("Error updating carbon footprint:", error);
     res.status(500).json({ error: error.message });
   }
 };
