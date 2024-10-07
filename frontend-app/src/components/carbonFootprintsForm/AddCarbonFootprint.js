@@ -1,8 +1,10 @@
-import React, {useState} from 'react';
+
+import React, { useState } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Box } from '@mui/material';
+import axiosInstance from '../../axiosInstance';
 
 const AddCarbonFootprint = ({ open, close, onSubmit }) => {
-    // State to store input values
+  // State to store input values
   const [electricity, setElectricity] = useState(0);
   const [gas, setGas] = useState(0);
   const [water, setWater] = useState(0);
@@ -15,22 +17,43 @@ const AddCarbonFootprint = ({ open, close, onSubmit }) => {
   const [paper, setPaper] = useState(0);
 
   // Handle form submission
-  const handleSubmit = () => {
-    // Calculate sums
-    const home = electricity + gas + water;
-    const waste = plastic + glass + paper;
-    const transport = car + bike + publicTransport + walk;
-    const total = home + waste + transport;
+  const handleSubmit = async () => {
+    try {
+      const home = electricity + gas + water;
+      const waste = plastic + glass + paper;
+      const transport = car + bike + publicTransport + walk;
+      const totalEmission = (electricity * 0.5) + (gas * 2.5) + (water * 0.1) + 
+                              (car * 0.2) + (bike * 0.2) + (publicTransport * 0.2) + (walk * 0.2) + 
+                              (plastic * 0.2) + (glass) + (paper * 0.1);
 
-    // Display the results (for now, using console log)
-    // console.log('Home:', home);
-    // console.log('Waste:', waste);
-    // console.log('Transport:', transport);
-    // console.log('Total:',total)
-    
-    onSubmit(home,waste,transport,total)
+      const userId = localStorage.getItem('userId');
+      const token = localStorage.getItem('authToken');
 
+      const carbonFootprintData = {
+        date: new Date().toISOString(),
+        homeEnergy: { electricity, gas, water },
+        transport: { car, bike, publicTransport, walk },
+        waste: { plastic, glass, paper },
+        totalCarbonEmission: totalEmission      };
+
+      await axiosInstance.post(
+        `/users/${userId}/carbon-footprint`,
+        { carbonFootprintData },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the request headers
+          },
+        }
+      );
+
+      // Call the onSubmit function to update the state in the parent component
+      onSubmit(home, transport, waste, totalEmission);
+      close(); // Close the dialog
+    } catch (error) {
+      console.error('Error adding carbon footprint:', error);
+    }
   };
+
   return (
     <Box>
       {/* Modal Dialog */}

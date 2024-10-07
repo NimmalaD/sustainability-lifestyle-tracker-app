@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import {useNavigate} from 'react-router-dom'
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -15,6 +16,8 @@ const Login = () => {
     password: "",
   });
 
+  const navigate = useNavigate()
+
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState(null);
@@ -25,15 +28,16 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent default form submission
     console.log(formData);
-
     try {
       const res = await axiosInstance.post("/login", formData);
-      console.log(res.data);
-      console.log(res.data.message);
+      const {token, userId, userName, message} = res.data
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("userId", userId);
       setSuccess(true);
-      setSuccessMessage(res.data.message);
+      setSuccessMessage(message);
       setFormData({email: "", password: ""});
       setError(null);
+      navigate(`/dashboard/${userId}`)
     } catch (error) {
       console.error("Error during logging in:", error.response?.data || error.message);
       setSuccess(false)
