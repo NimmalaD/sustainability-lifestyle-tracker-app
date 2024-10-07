@@ -10,11 +10,14 @@ import {
   TableRow,
   Paper,
   Typography,
+  TablePagination,
 } from '@mui/material';
 
 const CarbonFootprintTable = () => {
   const { userId } = useParams();
-  const [recentFootprint, setRecentFootprint] = useState(null);
+  const [footprints, setFootprints] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     const fetchCarbonFootprintData = async () => {
@@ -28,13 +31,11 @@ const CarbonFootprintTable = () => {
           },
         });
 
-        const footprints = response.data?.data || [];
+        const data = response.data?.data || [];
 
-        // Get the most recent footprint by sorting and selecting the first item
-        if (footprints.length > 0) {
-          const latestFootprint = footprints.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-          setRecentFootprint(latestFootprint);
-        }
+        // Sort by date to get the latest footprints
+        const sortedFootprints = data.sort((a, b) => new Date(b.date) - new Date(a.date));
+        setFootprints(sortedFootprints);
       } catch (error) {
         console.error('Error fetching carbon footprint data:', error);
       }
@@ -43,10 +44,24 @@ const CarbonFootprintTable = () => {
     fetchCarbonFootprintData();
   }, [userId]);
 
+  // Handle page change
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  // Handle rows per page change
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  // Calculate the data to be displayed on the current page
+  const paginatedFootprints = footprints.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
   return (
     <TableContainer component={Paper} sx={{ marginTop: 4 }}>
       <Typography variant="h6" align="center" sx={{ margin: 2 }}>
-        Recent Carbon Footprint Details
+        Carbon Footprint Details
       </Typography>
       <Table>
         <TableHead>
@@ -66,21 +81,23 @@ const CarbonFootprintTable = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {recentFootprint ? (
-            <TableRow key={recentFootprint._id}>
-              <TableCell>{new Date(recentFootprint.date).toLocaleDateString()}</TableCell>
-              <TableCell align="right">{recentFootprint.homeEnergy.electricity}</TableCell>
-              <TableCell align="right">{recentFootprint.homeEnergy.gas}</TableCell>
-              <TableCell align="right">{recentFootprint.homeEnergy.water}</TableCell>
-              <TableCell align="right">{recentFootprint.transport.car}</TableCell>
-              <TableCell align="right">{recentFootprint.transport.bike}</TableCell>
-              <TableCell align="right">{recentFootprint.transport.publicTransport}</TableCell>
-              <TableCell align="right">{recentFootprint.transport.walk}</TableCell>
-              <TableCell align="right">{recentFootprint.waste.plastic}</TableCell>
-              <TableCell align="right">{recentFootprint.waste.glass}</TableCell>
-              <TableCell align="right">{recentFootprint.waste.paper}</TableCell>
-              <TableCell align="right">{recentFootprint.totalCarbonEmission.toFixed(2)}</TableCell>
-            </TableRow>
+          {paginatedFootprints.length > 0 ? (
+            paginatedFootprints.map((footprint) => (
+              <TableRow key={footprint._id}>
+                <TableCell>{new Date(footprint.date).toLocaleDateString()}</TableCell>
+                <TableCell align="right">{footprint.homeEnergy.electricity}</TableCell>
+                <TableCell align="right">{footprint.homeEnergy.gas}</TableCell>
+                <TableCell align="right">{footprint.homeEnergy.water}</TableCell>
+                <TableCell align="right">{footprint.transport.car}</TableCell>
+                <TableCell align="right">{footprint.transport.bike}</TableCell>
+                <TableCell align="right">{footprint.transport.publicTransport}</TableCell>
+                <TableCell align="right">{footprint.transport.walk}</TableCell>
+                <TableCell align="right">{footprint.waste.plastic}</TableCell>
+                <TableCell align="right">{footprint.waste.glass}</TableCell>
+                <TableCell align="right">{footprint.waste.paper}</TableCell>
+                <TableCell align="right">{footprint.totalCarbonEmission.toFixed(2)}</TableCell>
+              </TableRow>
+            ))
           ) : (
             <TableRow>
               <TableCell colSpan={12} align="center">
@@ -90,6 +107,15 @@ const CarbonFootprintTable = () => {
           )}
         </TableBody>
       </Table>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={footprints.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </TableContainer>
   );
 };

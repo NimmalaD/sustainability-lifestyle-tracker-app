@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useParams } from 'react-router-dom'; // No need to import useNavigate
 import axiosInstance from '../../axiosInstance';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -17,7 +17,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import HistoryIcon from '@mui/icons-material/History';
 import CarbonFootprintDashboard from './carbonFootprints/CarbonFootprintDashboard';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Button } from '@mui/material';
 import AddCarbonFootprint from '../carbonFootprintsForm/AddCarbonFootprint';
 import CarbonFootprintTable from '../carbonFootprintTable/CarbonFootprintTable';
@@ -26,13 +26,13 @@ const drawerWidth = 240;
 
 export default function UserDashboard() {
   const { userId } = useParams();
-  const navigate = useNavigate(); // Use the navigate function from react-router-dom
   const [username, setUsername] = useState('');
   const [homeValue, setHomeValue] = useState(0);
   const [transportValue, setTransportValue] = useState(0);
   const [wasteValue, setWasteValue] = useState(0);
   const [totalValue, setTotalValue] = useState(0);
   const [open, setOpen] = useState(false);
+  const [selectedView, setSelectedView] = useState('dashboard'); // State to track the selected view
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -42,8 +42,8 @@ export default function UserDashboard() {
         // Fetch user information
         const userResponse = await axiosInstance.get(`/users/${userId}`, {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         setUsername(userResponse.data?.data?.name || '');
@@ -51,8 +51,8 @@ export default function UserDashboard() {
         // Fetch the carbon footprint data
         const carbonFootprintResponse = await axiosInstance.get(`/users/${userId}/carbon-footprint`, {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         // Set user data
@@ -85,15 +85,10 @@ export default function UserDashboard() {
 
   // Logout function
   const handleLogout = () => {
-    // Clear local storage
     localStorage.removeItem('authToken');
     localStorage.removeItem('userId');
-
-    // Optionally, if you have a logout endpoint on the backend
-    // axiosInstance.post('/logout', {}, { headers: { Authorization: `Bearer ${token}` } });
-
-    // Redirect to login page
-    navigate('/login');
+    // Redirect to login page (you can implement this with a different approach if not using navigate)
+    window.location.href = '/login';
   };
 
   const handleOnClick = () => {
@@ -121,7 +116,7 @@ export default function UserDashboard() {
             Welcome, {username ? username : 'User'}
           </Typography>
           <Button onClick={handleOnClick} sx={{ color: 'white' }}>Add Footprint</Button>
-          <Button onClick={handleLogout} sx={{ color: 'white', marginLeft: 'auto' }}>Logout</Button> {/* Logout button */}
+          <Button onClick={handleLogout} sx={{ color: 'white', marginLeft: 'auto' }}>Logout</Button>
           <AddCarbonFootprint open={open} close={handleOnClose} onSubmit={onSubmitForm} />
         </Toolbar>
       </AppBar>
@@ -138,7 +133,7 @@ export default function UserDashboard() {
           <List>
             {['Dashboard', 'Stats', 'History'].map((text, index) => (
               <ListItem key={text} disablePadding>
-                <ListItemButton>
+                <ListItemButton onClick={() => setSelectedView(text.toLowerCase())}>
                   <ListItemIcon>
                     {index === 0 && <DashboardIcon />}
                     {index === 1 && <BarChartIcon />}
@@ -154,10 +149,13 @@ export default function UserDashboard() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
-        <Grid container spacing={2}>
-          <CarbonFootprintDashboard home={homeValue} transport={transportValue} waste={wasteValue} totalEmission={totalValue} />
-          <CarbonFootprintTable></CarbonFootprintTable>
-        </Grid>
+        {selectedView === 'dashboard' && (
+          <Grid container spacing={2}>
+            <CarbonFootprintDashboard home={homeValue} transport={transportValue} waste={wasteValue} totalEmission={totalValue} />
+          </Grid>
+        )}
+        {selectedView === 'stats' && <CarbonFootprintTable />}
+        {selectedView === 'history' && <div>History Component Placeholder</div>}
       </Box>
     </Box>
   );
