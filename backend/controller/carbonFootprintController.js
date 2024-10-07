@@ -9,6 +9,11 @@ const createCarbonFootprint = async (req, res) => {
     console.log(`Creating carbon footprint for userId: ${userId}`); // Log userId
     console.log("Carbon Footprint Data:", carbonFootprintData); // Log incoming data
 
+    if(!userId){
+      console.log('user information missing')
+      return res.status(400).json({ message: "User information missing" });
+    }
+
     if (req.user.userId !== userId) {
       console.log("Unauthorized: User ID does not match the authenticated user");
       return res.status(403).json({ message: "Unauthorized action" });
@@ -64,6 +69,10 @@ const createCarbonFootprint = async (req, res) => {
 const fetchAllUserCarbonFootprints = async (req, res) => {
   try {
     const { userId } = req.params;
+    if(!userId){
+      console.log('user information missing')
+      return res.status(400).json({ message: "User information missing" });
+    }
     if (req.user.userId !== userId) {
       console.log("Unauthorized: User ID does not match the authenticated user");
       return res.status(403).json({ message: "Unauthorized action" });
@@ -90,6 +99,11 @@ const fetchOneCarbonFootprint = async (req, res) => {
     console.log(req.user)
     console.log(req.params)
     console.log(req.params.carbonFootprintId)
+
+    if(!userId){
+      console.log('user information missing')
+      return res.status(400).json({ message: "User information missing" });
+    }
 
     if (req.user.userId !== userId) {
       console.log("Unauthorized: User ID does not match the authenticated user");

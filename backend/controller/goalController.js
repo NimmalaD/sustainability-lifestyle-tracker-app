@@ -9,13 +9,13 @@ const addGoal = async (req, res) => {
     const { description, targetEmissionReduction, endDate } = req.body;
     console.log(`Adding goal for userId: ${userId}`); // Debug log
 
-    // Ensure `req.user` and `req.user._id` are defined
+    // Check if user is present
     if (!userId) {
       console.log("Unauthorized: User information is missing.");
-      return res.status(403).json({ message: "Unauthorized action" });
+      return res.status(400).json({ message: "Unauthorized action" });
     }
 
-    // Convert `req.user._id` to a string before comparison
+    // check if user id is equal to authorized user
     if (req.user.userId !== userId) {
       console.log(
         "Unauthorized: User ID does not match the authenticated user"
@@ -57,7 +57,7 @@ const fetchUserGoals = async (req, res) => {
     const goals = await Goal.find({ userId });
     if (!userId) {
       console.log("Unauthorized: User information is missing.");
-      return res.status(403).json({ message: "Unauthorized action" });
+      return res.status(400).json({ message: "Unauthorized action" });
     }
     if (req.user.userId !== userId) {
       console.log(
@@ -82,7 +82,7 @@ const fetchOneGoal = async (req, res) => {
     const goal = await Goal.findById(goalId);
     if (!userId) {
       console.log("Unauthorized: User information is missing.");
-      return res.status(403).json({ message: "Unauthorized action" });
+      return res.status(400).json({ message: "Unauthorized action" });
     }
     if (req.user.userId !== userId) {
       console.log(
@@ -106,6 +106,10 @@ const deleteGoals = async (req, res) => {
   try {
     const { userId, goalId } = req.params;
     const goal = await Goal.findById(goalId);
+    if (!userId) {
+      console.log("Unauthorized: User information is missing.");
+      return res.status(400).json({ message: "Unauthorized action" });
+    }
     if (req.user.userId !== userId) {
       console.log(
         "Unauthorized: User ID does not match the authenticated user"
